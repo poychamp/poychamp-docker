@@ -6,6 +6,7 @@ services:
       context: ./docker
     volumes:
       - ./src:/var/www/html
+      - ./sites-enabled:/etc/apache2/sites-enabled
       - ./letsencrypt:/etc/letsencrypt
     ports:
       - '80:80'

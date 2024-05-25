@@ -130,3 +130,8 @@ RUN echo "" >> ~/.bashrc && \
 USER ${APP_USER}
 
 RUN export COMPOSER_AUTH=
+
+USER root
+
+RUN apt-update && apt install certbot python3-certbot-apache
+

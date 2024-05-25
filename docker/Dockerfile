@@ -133,6 +133,6 @@ RUN export COMPOSER_AUTH=
 
 USER root
 
-RUN apt-update && apt install certbot python3-certbot-apache
+RUN apt update && apt install certbot python3-certbot-apache
 RUN echo "ServerName poychamp.com" >> /etc/apache2/apache2.conf
 

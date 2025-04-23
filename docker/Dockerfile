@@ -24,8 +24,6 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype=/usr/include/ --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd
 
-COPY ./000-default.conf /etc/apache2/sites-available/
-
 # Add user
 ARG PUID=1000
 ENV PUID ${PUID}

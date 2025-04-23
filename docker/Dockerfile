@@ -13,8 +13,12 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         nginx \
     && rm -rf /var/lib/apt/lists/*
 
-COPY ./default.conf /etc/nginx/sites-available/default.conf
-RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/
+RUN rm -rf /etc/nginx/sites-available
+RUN mkdir /etc/nginx/sites-available
+RUN rm -rf /etc/nginx/sites-enabled
+RUN mkdir /etc/nginx/sites-enabled
+COPY ./default /etc/nginx/sites-available/default
+RUN ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default.conf
 
 # Install APACHE
 RUN apt-get update && apt-get install -y \

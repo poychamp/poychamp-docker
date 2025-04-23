@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-fpm
 
 # Install base dependencies
 RUN apt-get update && apt-get install -y -q --no-install-recommends \
@@ -10,7 +10,10 @@ RUN apt-get update && apt-get install -y -q --no-install-recommends \
         libssl-dev \
         wget \
         vim \
+        nginx \
     && rm -rf /var/lib/apt/lists/*
+
+COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 # Install APACHE
 RUN apt-get update && apt-get install -y \
@@ -38,22 +41,22 @@ RUN groupadd -g ${PGID} ${APP_USER} && \
 # Install Node
 USER ${APP_USER}
 
-ARG NODE_VERSION=16.13.2
+ARG NODE_VERSION=20.9.0
 ENV NODE_VERSION ${NODE_VERSION}
 ARG NVM_DIR=/home/${APP_USER}/.nvm
 ENV NVM_DIR ${NVM_DIR}
 
 RUN mkdir -p $NVM_DIR && \
-    curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash \
-    && . ${NVM_DIR}/nvm.sh \
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.2/install.sh | bash \
+    && . $NVM_DIR/nvm.sh \
     && nvm install ${NODE_VERSION} \
     && nvm use ${NODE_VERSION} \
     && nvm alias ${NODE_VERSION} \
+    && npm cache clear --force \
     && npm config set fetch-retries 2 \
     && npm config set fetch-retry-factor 10 \
     && npm config set fetch-retry-mintimeout 10000 \
-    && npm config set fetch-retry-maxtimeout 60000 \
-    && ln -s `npm bin --global` /home/${APP_USER}/.node-bin
+    && npm config set fetch-retry-maxtimeout 60000
 
 RUN echo "" >> ~/.bashrc && \
     echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc && \
@@ -133,6 +136,4 @@ RUN export COMPOSER_AUTH=
 
 USER root
 
-RUN apt update && apt install certbot python3-certbot-apache -y -q --no-install-recommends
-RUN echo "ServerName poychamp.com" >> /etc/apache2/apache2.conf
-
+CMD ["sh", "-c", "php-fpm -D && nginx -g 'daemon off;'"]

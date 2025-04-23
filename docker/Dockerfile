@@ -70,7 +70,7 @@ COPY ./.npmrc /home/${APP_USER}/.npmrc
 # Set project owner
 ARG PROJECT_PATH=/var/www/html
 ENV PROJECT_PATH ${PROJECT_PATH}
-RUN chown -R ${PUID}:${PGID} ${PROJECT_PATH}
+RUN chown -R www-data:www-data ${PROJECT_PATH}
 
 # Install Composer
 
